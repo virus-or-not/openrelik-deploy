@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2024 Google LLC
+# Copyright 2024-2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,8 +22,30 @@ echo -e "\033[38;5;51m  ██  ██ ██     ██     ██ ███ �
 echo -e "\033[38;5;87m   ████  ██     ██████ ██  ██ ██  ██ ██████ ██████ ██ ██  ██\033[0m"
 echo ""
 
-# Set server version to install
-OPENRELIK_SERVER_VERSION="0.6.0"
+# Version configuration
+LATEST_RELEASE="0.6.0"
+
+# Prompt user to select version
+echo -e "\033[1;34m  Select a version to install:\033[0m"
+echo -e "    \033[1;37m1)\033[0m Latest release (${LATEST_RELEASE})"
+echo -e "    \033[1;37m2)\033[0m Bleeding edge (latest)"
+echo ""
+read -rp "  Enter your choice [1-2] (default: 1): " version_choice
+
+case "${version_choice}" in
+  2)
+    OPENRELIK_SERVER_VERSION="latest"
+    CONFIG_ENV_FILE="config_latest.env"
+    SERVER_REF="main"
+    echo -e "  \033[1;32m→ Installing bleeding edge version\033[0m\n"
+    ;;
+  *)
+    OPENRELIK_SERVER_VERSION="${LATEST_RELEASE}"
+    CONFIG_ENV_FILE="config_${LATEST_RELEASE}.env"
+    SERVER_REF="refs/tags/${LATEST_RELEASE}"
+    echo -e "  \033[1;32m→ Installing release ${LATEST_RELEASE}\033[0m\n"
+    ;;
+esac
 
 # Exit early if there already is an 'openrelik' directory
 if [ -d "openrelik" ]; then
@@ -78,7 +100,7 @@ replace_in_file() {
 # Setup variables
 echo -e "\033[1;34m[1/8] Setting up variables...\033[0m\c"
 BASE_DEPLOY_URL="https://raw.githubusercontent.com/openrelik/openrelik-deploy/main/docker"
-BASE_SERVER_URL="https://raw.githubusercontent.com/openrelik/openrelik-server/refs/tags/${OPENRELIK_SERVER_VERSION}"
+BASE_SERVER_URL="https://raw.githubusercontent.com/openrelik/openrelik-server/${SERVER_REF}"
 STORAGE_PATH="\/usr\/share\/openrelik\/data\/artifacts"
 POSTGRES_USER="openrelik"
 POSTGRES_PASSWORD="$(generate_random_string)"
@@ -98,7 +120,7 @@ cd ./openrelik
 
 # Fetch installation files
 echo -e "\033[1;34m[3/8] Downloading configuration files...\033[0m\c"
-curl -s ${BASE_DEPLOY_URL}/config.env > config.env
+curl -s ${BASE_DEPLOY_URL}/${CONFIG_ENV_FILE} > config.env
 curl -s ${BASE_DEPLOY_URL}/docker-compose.yml > docker-compose.yml
 curl -s ${BASE_DEPLOY_URL}/prometheus.yml > prometheus.yml
 curl -s ${BASE_SERVER_URL}/settings_example.toml > settings.toml
