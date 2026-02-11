@@ -125,16 +125,6 @@ services:
         - ./data:/usr/share/openrelik/data
       command: "celery --app=src.app worker --task-events --concurrency=2 --loglevel=INFO -Q openrelik-worker-extraction"
 
-  openrelik-worker-hayabusa:
-      container_name: openrelik-worker-hayabusa
-      image: ghcr.io/openrelik-contrib/openrelik-worker-hayabusa:${OPENRELIK_WORKER_HAYABUSA_VERSION}
-      restart: always
-      environment:
-        - REDIS_URL=redis://openrelik-redis:6379
-      volumes:
-        - ./data:/usr/share/openrelik/data
-      command: "celery --app=src.app worker --task-events --concurrency=4 --loglevel=INFO -Q openrelik-worker-hayabusa"
-
   openrelik-worker-analyzer-config:
       container_name: openrelik-worker-analyzer-config
       image: ghcr.io/openrelik/openrelik-worker-analyzer-config:${OPENRELIK_WORKER_ANALYZER_CONFIG_VERSION}
