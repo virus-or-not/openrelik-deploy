@@ -14,18 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cat << "EOF"
+echo ""
+echo -e "\033[38;5;33m   ████  ██████ ██████ ██  ██ ██████ ██████ ██     ██ ██  ██\033[0m"
+echo -e "\033[38;5;39m  ██  ██ ██  ██ ██     ███ ██ ██  ██ ██     ██     ██ ██ ██\033[0m"
+echo -e "\033[38;5;45m  ██  ██ ██████ █████  ██████ ██████ █████  ██     ██ ████\033[0m"
+echo -e "\033[38;5;51m  ██  ██ ██     ██     ██ ███ ██ ██  ██     ██     ██ ██ ██\033[0m"
+echo -e "\033[38;5;87m   ████  ██     ██████ ██  ██ ██  ██ ██████ ██████ ██ ██  ██\033[0m"
+echo ""
 
-   ____                   _____      _ _ _
-  / __ \                 |  __ \    | (_) |
- | |  | |_ __   ___ _ __ | |__) |___| |_| | __
- | |  | | '_ \ / _ \ '_ \|  _  // _ \ | | |/ /
- | |__| | |_) |  __/ | | | | \ \  __/ | |   <
-  \____/| .__/ \___|_| |_|_|  \_\___|_|_|_|\_\
-        | |
-        |_|
-
-EOF
+# Set server version to install
+OPENRELIK_SERVER_VERSION="0.6.0"
 
 # Exit early if there already is an 'openrelik' directory
 if [ -d "openrelik" ]; then
@@ -80,7 +78,7 @@ replace_in_file() {
 # Setup variables
 echo -e "\033[1;34m[1/8] Setting up variables...\033[0m\c"
 BASE_DEPLOY_URL="https://raw.githubusercontent.com/openrelik/openrelik-deploy/main/docker"
-BASE_SERVER_URL="https://raw.githubusercontent.com/openrelik/openrelik-server/main"
+BASE_SERVER_URL="https://raw.githubusercontent.com/openrelik/openrelik-server/refs/tags/${OPENRELIK_SERVER_VERSION}"
 STORAGE_PATH="\/usr\/share\/openrelik\/data\/artifacts"
 POSTGRES_USER="openrelik"
 POSTGRES_PASSWORD="$(generate_random_string)"
