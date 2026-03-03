@@ -23,8 +23,8 @@ echo -e "\033[38;5;87m   ████  ██     ██████ ██  █
 echo ""
 
 # Version configuration
-RELEASES=("0.7.0-rc.1" "0.6.0")
-LATEST_RELEASE="0.6.0"
+RELEASES=("0.7.0" "0.6.0")
+LATEST_RELEASE="0.7.0"
 
 # Prompt user to select version
 echo -e "\033[1;34m  Select a version to install:\033[0m"
