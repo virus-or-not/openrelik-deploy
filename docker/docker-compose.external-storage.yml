@@ -1,0 +1,35 @@
+# Override file: adds a read-only external storage volume to all services that
+# process artifacts. Apply on top of the base compose file:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.external-storage.yml up -d
+#
+# Required variables in your .env / config.env:
+#   EXTERNAL_STORAGE_HOST_PATH=/path/on/host
+#   EXTERNAL_STORAGE_CONTAINER_PATH=/mnt/external
+#
+# Compose merges volume lists additively, so existing mounts are preserved.
+
+services:
+  openrelik-server:
+    volumes:
+      - ${EXTERNAL_STORAGE_HOST_PATH}:${EXTERNAL_STORAGE_CONTAINER_PATH}:ro,z
+
+  openrelik-mediator:
+    volumes:
+      - ${EXTERNAL_STORAGE_HOST_PATH}:${EXTERNAL_STORAGE_CONTAINER_PATH}:ro,z
+
+  openrelik-worker-strings:
+    volumes:
+      - ${EXTERNAL_STORAGE_HOST_PATH}:${EXTERNAL_STORAGE_CONTAINER_PATH}:ro,z
+
+  openrelik-worker-grep:
+    volumes:
+      - ${EXTERNAL_STORAGE_HOST_PATH}:${EXTERNAL_STORAGE_CONTAINER_PATH}:ro,z
+
+  openrelik-worker-plaso:
+    volumes:
+      - ${EXTERNAL_STORAGE_HOST_PATH}:${EXTERNAL_STORAGE_CONTAINER_PATH}:ro,z
+
+  openrelik-worker-extraction:
+    volumes:
+      - ${EXTERNAL_STORAGE_HOST_PATH}:${EXTERNAL_STORAGE_CONTAINER_PATH}:ro,z
