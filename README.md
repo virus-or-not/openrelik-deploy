@@ -4,6 +4,55 @@
 
 This is not an official Google product (experimental or otherwise), it is just code that happens to be owned by Google.
 
+## Post-installation steps for custom builds
+
+If you are using custom images (e.g. `ghcr.io/virus-or-not/openrelik-server`) instead of the official ones, follow these steps after running `install.sh`.
+
+### 1. Replace image references in docker-compose.yml
+
+Open `openrelik/docker-compose.yml` and update the `openrelik-server` and `openrelik-ui` service definitions. Comment out the official `image:` line and add your custom image or a `build:` context:
+
+```yaml
+openrelik-server:
+  # image: ghcr.io/openrelik/openrelik-server:${OPENRELIK_SERVER_VERSION}
+  image: ghcr.io/virus-or-not/openrelik-server:latest
+  # — or, to build from source —
+  # build:
+  #   context: /path/to/openrelik-server
+
+openrelik-ui:
+  # image: ghcr.io/openrelik/openrelik-ui:${OPENRELIK_UI_VERSION}
+  image: ghcr.io/virus-or-not/openrelik-ui:latest
+```
+
+### 2. Pull and restart the custom containers
+
+```bash
+cd openrelik/
+docker compose pull openrelik-server openrelik-ui
+docker compose up -d openrelik-server openrelik-ui
+```
+
+### 3. Run database migrations
+
+Custom builds may include Alembic migrations that are not present in the official images (for example, schema changes required by external storage support). Apply them after starting the containers:
+
+```bash
+docker exec openrelik-server bash -c \
+  "cd /app/openrelik/datastores/sql && alembic upgrade head"
+```
+
+### 4. Verify the migration was applied
+
+```bash
+docker exec openrelik-server bash -c \
+  "cd /app/openrelik/datastores/sql && alembic current"
+```
+
+The output should show the latest revision hash followed by `(head)`. If it does not, re-run the upgrade command and check the container logs for errors.
+
+---
+
 ## External Storage Override
 
 The `docker/docker-compose.external-storage.yml` Compose override mounts a
